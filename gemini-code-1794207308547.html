@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keralotsavam '26 | Athavanad Panchayat</title>
+    <!-- Tailwind CSS CDN for Modern UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#fdf4f0', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', dark: '#1e293b' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans selection:bg-orange-500 selection:text-white">
+
+    <!-- Header / Banner -->
+    <header class="bg-gradient-to-r from-slate-950 via-slate-900 to-orange-950 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-orange-600 p-3 rounded-xl text-white shadow-md shadow-orange-600/30">
+                    <i class="fa-solid fa-trophy text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs uppercase tracking-widest text-orange-400 font-bold">Athavanad Panchayat Official Portal</span>
+                    <h1 class="text-2xl font-black tracking-tight text-white">KERALOTSAVAM '26</h1>
+                </div>
+            </div>
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
+                <button onclick="switchTab('standings')" id="nav-standings" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-orange-600 text-white shadow">
+                    <i class="fa-solid fa-ranking-star mr-2"></i>Live Standings
+                </button>
+                <button onclick="switchTab('results')" id="nav-results" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-700">
+                    <i class="fa-solid fa-bolt mr-2"></i>Live Results Feed
+                </button>
+                <button onclick="switchTab('clubs')" id="nav-clubs" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-700">
+                    <i class="fa-solid fa-shield-halved mr-2"></i>Contesting Clubs (23)
+                </button>
+                <button onclick="switchTab('admin')" id="nav-admin" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-700">
+                    <i class="fa-solid fa-user-gear mr-2"></i>Admin Entry
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- TAB 1: STANDINGS -->
+        <section id="tab-standings" class="space-y-6 tab-content">
+            <div class="bg-gradient-to-r from-orange-600/20 to-amber-600/10 border border-orange-500/30 rounded-2xl p-6 backdrop-blur-md">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-orange-500"></i> Overall Championship Standings
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-1">Points update dynamically as event results are entered from the admin panel.</p>
+                    </div>
+                    <div class="flex items-center gap-3 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Live Sync Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="bg-slate-800/60 border border-slate-700 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/80 border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="py-4 px-6 font-bold text-center w-16">Rank</th>
+                                <th class="py-4 px-6 font-bold">Youth Club Name</th>
+                                <th class="py-4 px-6 font-bold text-center">Gold</th>
+                                <th class="py-4 px-6 font-bold text-center">Silver</th>
+                                <th class="py-4 px-6 font-bold text-center">Bronze</th>
+                                <th class="py-4 px-6 font-bold text-right">Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standings-table-body" class="divide-y divide-slate-700/50 text-sm">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: RESULTS FEED -->
+        <section id="tab-results" class="space-y-6 tab-content hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-stopwatch text-orange-500"></i> Completed Events & Results Feed
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">Detailed breakdown of podium positions across Games, Athletics, Swimming & Arts.</p>
+                </div>
+                <div class="relative w-full md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-sm"></i>
+                    <input type="text" id="result-search" oninput="renderResults()" placeholder="Search events or clubs..." class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500">
+                </div>
+            </div>
+
+            <div id="results-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 3: CLUBS DIRECTORY -->
+        <section id="tab-clubs" class="space-y-6 tab-content hidden">
+            <div>
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-users-rectangle text-orange-500"></i> Registered Contesting Clubs
+                </h2>
+                <p class="text-slate-400 text-sm mt-1">All 23 official youth clubs participating from Athavanad Panchayat.</p>
+            </div>
+
+            <div id="clubs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 4: ADMIN ENTRY PANEL -->
+        <section id="tab-admin" class="space-y-6 tab-content hidden">
+            <div class="max-w-3xl mx-auto bg-slate-800/80 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-2xl backdrop-blur-md">
+                <div class="border-b border-slate-700 pb-4 mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-circle-plus text-orange-500"></i> Enter New Event Result
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">Submitting this form immediately updates the club standings and adds an entry to the live feed.</p>
+                </div>
+
+                <form id="result-form" onsubmit="handleResultSubmit(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Category</label>
+                            <select id="event-category" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500">
+                                <option value="Athletics">Athletics</option>
+                                <option value="Games">Games (Football/Cricket/etc.)</option>
+                                <option value="Swimming">Swimming</option>
+                                <option value="Arts Festival">Arts Festival</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Event Name</label>
+                            <input type="text" id="event-name" required placeholder="e.g. 100m Sprint / Badminton / Oppana" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+                        <!-- 1st Place -->
+                        <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl space-y-3">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-amber-400">
+                                <i class="fa-solid fa-medal text-amber-400 mr-1"></i> 1st Place (Gold - 5 Pts)
+                            </label>
+                            <select id="place-1" required class="club-select w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                                <option value="">Select Club...</option>
+                            </select>
+                        </div>
+
+                        <!-- 2nd Place -->
+                        <div class="bg-slate-300/10 border border-slate-300/30 p-4 rounded-xl space-y-3">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                <i class="fa-solid fa-medal text-slate-300 mr-1"></i> 2nd Place (Silver - 3 Pts)
+                            </label>
+                            <select id="place-2" required class="club-select w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-slate-400">
+                                <option value="">Select Club...</option>
+                            </select>
+                        </div>
+
+                        <!-- 3rd Place -->
+                        <div class="bg-amber-700/10 border border-amber-700/30 p-4 rounded-xl space-y-3">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-amber-600">
+                                <i class="fa-solid fa-medal text-amber-600 mr-1"></i> 3rd Place (Bronze - 1 Pt)
+                            </label>
+                            <select id="place-3" required class="club-select w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-600">
+                                <option value="">Select Club...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-between">
+                        <button type="button" onclick="resetData()" class="px-4 py-2 rounded-xl text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 transition-all">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Reset All Data
+                        </button>
+                        <button type="submit" class="bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-orange-500/30 hover:opacity-95 transition-all text-sm">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Publish Result Live
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-16 py-6 text-center text-xs text-slate-500">
+        <p>Keralotsavam '26 • Athavanad Panchayat Youth Festival Management System</p>
+    </h2>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // List of 23 Clubs
+        const clubNames = [
+            "1. Gally Arts Sports Club Puthanathani",
+            "2. AL JASEERA CULTURAL CENTRE AND YOUTH CLUB",
+            "3. NFC Nechithodi",
+            "4. NAVAMITHRA ARTS & SPORTS CLUB MANAPPADI",
+            "5. Fedx arts and sports club",
+            "6. NEW ROYALS HAJIPADI",
+            "7. WE FOR UNITED CHELAKKOD",
+            "8. AL MAJAS Arts Sports Club Athavanad",
+            "9. Kairali arts and sports",
+            "10. Legends arts and sports club",
+            "11. Chirak Youth Club Athavanad",
+            "12. VILLUR PADIYANZ Arts Sports Club",
+            "13. Yuva Capitals Koodassery Arts Sports Club",
+            "14. Corex Health Club",
+            "15. NEW CARE CULTURAL CENTRE CHUNGAM",
+            "16. REAL ATHAVANAD",
+            "17. CFC ARTS AND SPORTS CLUB CHAKIRIPARA",
+            "18. Spartance FC",
+            "19. AL Thurab",
+            "20. Galaxy Kanjippura",
+            "21. Karma Kuttikkalathani",
+            "22. AL-AHLI ARTSSPORTS CLUB POOLAMANGALAM",
+            "23. Sthuthi kattilangadi"
+        ];
+
+        // Initialize LocalStorage Database if empty
+        let clubsData = JSON.parse(localStorage.getItem('keralotsavam_clubs')) || clubNames.map(name => ({
+            name: name,
+            gold: 0,
+            silver: 0,
+            bronze: 0,
+            points: 0
+        }));
+
+        let resultsData = JSON.parse(localStorage.getItem('keralotsavam_results')) || [
+            { id: 1, category: "Athletics", event: "100m Sprint (Men)", gold: clubNames[0], silver: clubNames[4], bronze: clubNames[10] },
+            { id: 2, category: "Games", event: "Football Championship", gold: clubNames[17], silver: clubNames[1], bronze: clubNames[15] }
+        ];
+
+        // Recalculate points on load to stay accurate
+        recalculatePoints();
+
+        function saveData() {
+            localStorage.setItem('keralotsavam_clubs', JSON.stringify(clubsData));
+            localStorage.setItem('keralotsavam_results', JSON.stringify(resultsData));
+        }
+
+        function recalculatePoints() {
+            // Reset counts
+            clubsData.forEach(c => { c.gold = 0; c.silver = 0; c.bronze = 0; c.points = 0; });
+
+            // Tally from results
+            resultsData.forEach(res => {
+                let gClub = clubsData.find(c => c.name === res.gold);
+                let sClub = clubsData.find(c => c.name === res.silver);
+                let bClub = clubsData.find(c => c.name === res.bronze);
+
+                if (gClub) gClub.gold++;
+                if (sClub) sClub.silver++;
+                if (bClub) bClub.bronze++;
+            });
+
+            // Calculate total points (Gold = 5, Silver = 3, Bronze = 1)
+            clubsData.forEach(c => {
+                c.points = (c.gold * 5) + (c.silver * 3) + (c.bronze * 1);
+            });
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-orange-600', 'text-white', 'shadow');
+                el.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-700');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            activeBtn.classList.add('bg-orange-600', 'text-white', 'shadow');
+            activeBtn.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-700');
+
+            if (tabId === 'standings') renderStandings();
+            if (tabId === 'results') renderResults();
+            if (tabId === 'clubs') renderClubs();
+            if (tabId === 'admin') populateDropdowns();
+        }
+
+        // Render Standings Table
+        function renderStandings() {
+            recalculatePoints();
+            // Sort by Points DESC, then Gold DESC, then Silver DESC
+            let sortedClubs = [...clubsData].sort((a, b) => b.points - a.points || b.gold - a.gold || b.silver - a.silver);
+            
+            let tbody = document.getElementById('standings-table-body');
+            tbody.innerHTML = '';
+
+            sortedClubs.forEach((club, index) => {
+                let rankBadge = '';
+                if (index === 0) rankBadge = '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg font-black text-xs">1st</span>';
+                else if (index === 1) rankBadge = '<span class="bg-slate-300/20 text-slate-300 border border-slate-300/30 px-2.5 py-1 rounded-lg font-black text-xs">2nd</span>';
+                else if (index === 2) rankBadge = '<span class="bg-amber-700/20 text-amber-600 border border-amber-700/30 px-2.5 py-1 rounded-lg font-black text-xs">3rd</span>';
+                else rankBadge = `<span class="text-slate-400 font-semibold text-xs">#${index + 1}</span>`;
+
+                let row = `
+                    <tr class="hover:bg-slate-700/30 transition-colors">
+                        <td class="py-4 px-6 text-center">${rankBadge}</td>
+                        <td class="py-4 px-6 font-medium text-white">${club.name}</td>
+                        <td class="py-4 px-6 text-center font-semibold text-amber-400">${club.gold}</td>
+                        <td class="py-4 px-6 text-center font-semibold text-slate-300">${club.silver}</td>
+                        <td class="py-4 px-6 text-center font-semibold text-amber-600">${club.bronze}</td>
+                        <td class="py-4 px-6 text-right font-black text-orange-400 text-base">${club.points}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Render Results Feed
+        function renderResults() {
+            let container = document.getElementById('results-feed-container');
+            let query = document.getElementById('result-search').value.toLowerCase();
+            container.innerHTML = '';
+
+            let filtered = resultsData.filter(r => 
+                r.event.toLowerCase().includes(query) || 
+                r.category.toLowerCase().includes(query) || 
+                r.gold.toLowerCase().includes(query) ||
+                r.silver.toLowerCase().includes(query) ||
+                r.bronze.toLowerCase().includes(query)
+            ).reverse();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-500">No matching events found.</div>`;
+                return;
+            }
+
+            filtered.forEach(res => {
+                let badgeColor = 'bg-slate-700 text-slate-300';
+                if (res.category === 'Athletics') badgeColor = 'bg-blue-500/20 text-blue-400 border border-blue-500/30';
+                if (res.category === 'Games') badgeColor = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                if (res.category === 'Swimming') badgeColor = 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30';
+                if (res.category === 'Arts Festival') badgeColor = 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
+
+                let card = `
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4">
+                        <div>
+                            <div class="flex justify-between items-center gap-2 mb-2">
+                                <span class="text-xs px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider ${badgeColor}">${res.category}</span>
+                                <span class="text-xs text-slate-500 font-mono">ID: #${res.id}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">${res.event}</h3>
+                        </div>
+                        <div class="space-y-2 pt-2 border-t border-slate-700/60 text-sm">
+                            <div class="flex items-center justify-between bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                                <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-medal"></i> 1st (Gold)</span>
+                                <span class="font-medium text-slate-200 text-right truncate max-w-[200px]">${res.gold}</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-300/10 px-3 py-1.5 rounded-xl border border-slate-300/20">
+                                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-medal"></i> 2nd (Silver)</span>
+                                <span class="font-medium text-slate-200 text-right truncate max-w-[200px]">${res.silver}</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-amber-700/10 px-3 py-1.5 rounded-xl border border-amber-700/20">
+                                <span class="text-xs font-bold text-amber-600 flex items-center gap-1.5"><i class="fa-solid fa-medal"></i> 3rd (Bronze)</span>
+                                <span class="font-medium text-slate-200 text-right truncate max-w-[200px]">${res.bronze}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // Render Clubs Grid
+        function renderClubs() {
+            let grid = document.getElementById('clubs-grid');
+            grid.innerHTML = '';
+
+            clubsData.forEach((club, index) => {
+                let card = `
+                    <div class="bg-slate-800/60 border border-slate-700 rounded-xl p-4 flex items-center gap-3 shadow-md">
+                        <div class="bg-slate-900 text-orange-400 font-black text-sm w-10 h-10 rounded-lg flex items-center justify-center border border-slate-700 shrink-0">
+                            ${index + 1}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="font-bold text-white text-sm truncate">${club.name.replace(/^\d+\.\s*/, '')}</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">Points: <span class="text-orange-400 font-bold">${club.points}</span> | Gold: <span class="text-amber-400 font-semibold">${club.gold}</span></p>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // Populate Dropdowns in Admin Form
+        function populateDropdowns() {
+            let selects = document.querySelectorAll('.club-select');
+            selects.forEach(sel => {
+                let currentVal = sel.value;
+                sel.innerHTML = '<option value="">Select Club...</option>';
+                clubsData.forEach(club => {
+                    let opt = document.createElement('option');
+                    opt.value = club.name;
+                    opt.textContent = club.name;
+                    sel.appendChild(opt);
+                });
+                sel.value = currentVal;
+            });
+        }
+
+        // Handle Admin Form Submission
+        function handleResultSubmit(e) {
+            e.preventDefault();
+            let category = document.getElementById('event-category').value;
+            let eventName = document.getElementById('event-name').value;
+            let gold = document.getElementById('place-1').value;
+            let silver = document.getElementById('place-2').value;
+            let bronze = document.getElementById('place-3').value;
+
+            // Validate unique selections
+            if (gold === silver || gold === bronze || silver === bronze) {
+                alert("Error: Please select different clubs for 1st, 2nd, and 3rd place!");
+                return;
+            }
+
+            let newResult = {
+                id: resultsData.length + 1,
+                category,
+                event: eventName,
+                gold,
+                silver,
+                bronze
+            };
+
+            resultsData.push(newResult);
+            recalculatePoints();
+            saveData();
+
+            alert("Result successfully published and live standings updated!");
+            document.getElementById('result-form').reset();
+            switchTab('standings');
+        }
+
+        // Reset Data Function
+        function resetData() {
+            if (confirm("Are you sure you want to reset all test results and points?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Initial Load
+        renderStandings();
+    </script>
+</body>
+</html>
